@@ -3,7 +3,10 @@ from flask import Flask, request, make_response, jsonify
 import json
 from collections import OrderedDict
 from movie_search import search_response
+from naver_movie_api import getInfoFromNaver, get_movie_review
+from naver_movie_code_api import get_movie_code
 from pprint import pprint
+from movie_senti_anal import predict_pos_neg
 from konlpy.tag import Okt
 
 # flask app 초기화
@@ -40,18 +43,24 @@ def results():
         file_data["fulfillmentText"] = '영화 : {0}'.format(release_info)
     else:
         sentence = data['queryResult']
-        sentences_tag = []
-        noun_list = []
-        okt = Okt()
-        morph = okt.pos(sentence)
-        sentences_tag.append(morph)
+        x = predict_pos_neg(sentence)
+        score_info = search_response.scoresearch(x)
+        file_data["fulfillmentText"] = score_info
 
-        for sentence1 in sentences_tag:
-            for word, tag in sentence1:
-                if tag in ['Noun', 'Adjective']:
-                    noun_list.append(word)
-        noun_info = search_response.Nounsearch(data['Noun'])
-        file_data['fulfillmentText'] = noun_info
+
+        # sentences_tag = []
+        # noun_list = []
+        # okt = Okt()
+        # morph = okt.pos(sentence)
+        # sentences_tag.append(morph)
+        #
+        # for sentence1 in sentences_tag:
+        #     for word, tag in sentence1:
+        #         if tag in ['Noun', 'Adjective']:
+        #             noun_list.append(word)
+        # noun_info = search_response.Nounsearch(data['Noun'])
+        # # file_data['fulfillmentText'] = noun_info
+        # file_data['fulfillmentText'] = ''.join(getInfoFromNaver(noun_info))
 
 
 # app 실행

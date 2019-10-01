@@ -44,6 +44,7 @@ class search_response():
                                             }
                                         }
                                     })
+
                 if list(find_data['hits']['hits']) != []:
                     find_data_list = list(find_data['hits']['hits'])
                     find_data_dict = find_data_list[0]['_source']
@@ -56,13 +57,30 @@ class search_response():
         f_n = found_n
         find_data = es.search(index="movie_senti_anal",
                               body={
-                                  'query' : {
-                                      'match' : {
-                                          'review' : f_n
+                                  'query': {
+                                      'match': {
+                                          'review': f_n
                                       }
                                   }
                               })
+
         find_data_list = list(find_data['hits']['hits'])
+        find_data_dict = find_data_list[0]['_source']
+
+        return find_data_dict
+
+    def scoresearch(score):
+        num = score
+        find_data = es.search(index="movie-senti-anal",
+                              body={
+                                  'query':{
+                                      'match':{
+                                          'pos_neg' : num
+                                      }
+                                  }
+                              })
+
+        find_data_list = list(find_data['review'])
         find_data_dict = find_data_list[0]['_source']
 
         return find_data_dict
