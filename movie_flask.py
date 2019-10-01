@@ -41,26 +41,24 @@ def results():
     elif data['openDt'] != '':
         release_info = search_response.movie_release_dsl(data['openDt'])
         file_data["fulfillmentText"] = '영화 : {0}'.format(release_info)
-    else:
+     else:
         sentence = data['queryResult']
         x = predict_pos_neg(sentence)
         score_info = search_response.scoresearch(x)
-        file_data["fulfillmentText"] = score_info
+        #file_data["fulfillmentText"] = score_info
 
+        sentences_tag = []
+        noun_list = []
+        okt = Okt()
+        morph = okt.pos(score_info)
+        sentences_tag.append(morph)
 
-        # sentences_tag = []
-        # noun_list = []
-        # okt = Okt()
-        # morph = okt.pos(sentence)
-        # sentences_tag.append(morph)
-        #
-        # for sentence1 in sentences_tag:
-        #     for word, tag in sentence1:
-        #         if tag in ['Noun', 'Adjective']:
-        #             noun_list.append(word)
-        # noun_info = search_response.Nounsearch(data['Noun'])
-        # # file_data['fulfillmentText'] = noun_info
-        # file_data['fulfillmentText'] = ''.join(getInfoFromNaver(noun_info))
+        for sentence1 in sentences_tag:
+            for word, tag in sentence1:
+                if tag in ['Noun']:
+                    noun_list.append(word)
+        noun_info = search_response.movie_name_dsl(noun_list[0])
+        file_data['fulfillmentText'] = ''.join(getInfoFromNaver(noun_info))
 
 
 # app 실행
