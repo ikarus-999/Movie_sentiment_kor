@@ -42,7 +42,7 @@ def results():
         release_info = search_response.movie_release_dsl(data['openDt'])
         file_data["fulfillmentText"] = '영화 : {0}'.format(release_info)
      else:
-        sentence = data['queryResult']
+        sentence = data
         x = predict_pos_neg(sentence)
         score_info = search_response.scoresearch(x)
         #file_data["fulfillmentText"] = score_info
